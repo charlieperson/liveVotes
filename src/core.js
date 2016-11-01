@@ -15,14 +15,17 @@ function getWinners(vote) {
 }
 
 export function next(state) {
-  if(state.get('entries') == List()) {
-    return Map({winner: getWinners(state.get('vote'))[0]})
-  }
   const entries = state.get('entries').concat(getWinners(state.get('vote')));
-  return state.merge({
-    vote: Map({pair: entries.take(2)}),
-    entries: entries.skip(2)
-  })
+  if(entries.size === 1) {
+    return state.remove('entries')
+                .remove('vote')
+                .set('winner', entries.first())
+  } else {
+    return state.merge({
+      vote: Map({pair: entries.take(2)}),
+      entries: entries.skip(2)
+    })
+  }
 }
 
 export function vote(state, choice) {
